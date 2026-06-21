@@ -1,3 +1,5 @@
+import { useCarbonStore } from '../store/carbonStore';
+
 export function useCarbonScore() {
-  return 0;
+  return useCarbonStore((state) => state.profile.carbonScore);
 }

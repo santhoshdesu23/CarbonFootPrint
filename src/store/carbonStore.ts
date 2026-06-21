@@ -48,7 +48,9 @@ export const useCarbonStore = create<CarbonState>()(
 		(set, get) => ({
 			...buildStateFromInput(DEFAULT_INPUT),
 			updateInput: (input) => {
-				const nextInput = { ...get().profile, ...input } as CarbonInput;
+				const { transportKm, transportDaysPerWeek, meatMealsPerWeek, dairyMealsPerWeek, homeEnergyKwhPerMonth, shoppingSpendPerWeek, lifestyleHoursPerWeek } = get().profile;
+				const currentInput: CarbonInput = { transportKm, transportDaysPerWeek, meatMealsPerWeek, dairyMealsPerWeek, homeEnergyKwhPerMonth, shoppingSpendPerWeek, lifestyleHoursPerWeek };
+				const nextInput: CarbonInput = { ...currentInput, ...input };
 				set({ ...buildStateFromInput(nextInput) });
 			},
 			resetProfile: () => {
@@ -78,4 +80,3 @@ export const useCarbonStore = create<CarbonState>()(
 );
 
 export const carbonStore = useCarbonStore;
-export const calculateProfileScore = calculateCarbonScore;

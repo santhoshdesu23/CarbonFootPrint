@@ -104,27 +104,26 @@ export function getCarbonScenarioPreset(name: 'commuter' | 'food-first' | 'home-
 }
 
 export function buildScenarioProjection(profile: CarbonProfile, scenario: CarbonScenario): ScenarioProjection {
-  const reductions = {
-    transport: profile.categoryEmissions.find((entry) => entry.category === 'transport')?.kgCo2e ?? 0,
-    food: profile.categoryEmissions.find((entry) => entry.category === 'food')?.kgCo2e ?? 0,
-    energy: profile.categoryEmissions.find((entry) => entry.category === 'energy')?.kgCo2e ?? 0,
-    shopping: profile.categoryEmissions.find((entry) => entry.category === 'shopping')?.kgCo2e ?? 0,
-    lifestyle: profile.categoryEmissions.find((entry) => entry.category === 'lifestyle')?.kgCo2e ?? 0,
-  };
+  // Build a lookup map once instead of 5 sequential Array.find calls.
+  const emissionMap = Object.fromEntries(
+    profile.categoryEmissions.map((e) => [e.category, e.kgCo2e]),
+  ) as Record<CarbonCategory, number>;
+
+  const clampPct = (pct: number) => clamp(pct, 0, 100) / 100;
 
   const projectedCategoryEmissions: CategoryEmission[] = [
-    { category: 'transport', kgCo2e: roundToOneDecimal(reductions.transport * (1 - clamp(scenario.transportReductionPercent, 0, 100) / 100)) },
-    { category: 'food', kgCo2e: roundToOneDecimal(reductions.food * (1 - clamp(scenario.foodReductionPercent, 0, 100) / 100)) },
-    { category: 'energy', kgCo2e: roundToOneDecimal(reductions.energy * (1 - clamp(scenario.energyReductionPercent, 0, 100) / 100)) },
-    { category: 'shopping', kgCo2e: roundToOneDecimal(reductions.shopping * (1 - clamp(scenario.shoppingReductionPercent, 0, 100) / 100)) },
-    { category: 'lifestyle', kgCo2e: roundToOneDecimal(reductions.lifestyle * (1 - clamp(scenario.lifestyleReductionPercent, 0, 100) / 100)) },
+    { category: 'transport', kgCo2e: roundToOneDecimal((emissionMap['transport'] ?? 0) * (1 - clampPct(scenario.transportReductionPercent))) },
+    { category: 'food',      kgCo2e: roundToOneDecimal((emissionMap['food'] ?? 0)      * (1 - clampPct(scenario.foodReductionPercent))) },
+    { category: 'energy',    kgCo2e: roundToOneDecimal((emissionMap['energy'] ?? 0)    * (1 - clampPct(scenario.energyReductionPercent))) },
+    { category: 'shopping',  kgCo2e: roundToOneDecimal((emissionMap['shopping'] ?? 0)  * (1 - clampPct(scenario.shoppingReductionPercent))) },
+    { category: 'lifestyle', kgCo2e: roundToOneDecimal((emissionMap['lifestyle'] ?? 0) * (1 - clampPct(scenario.lifestyleReductionPercent))) },
   ];
 
   const projectedTotalKgCo2e = roundToOneDecimal(projectedCategoryEmissions.reduce((sum, entry) => sum + entry.kgCo2e, 0));
   const projectedCarbonScore = calculateCarbonScore(projectedTotalKgCo2e);
   const totalSavingsKgCo2e = roundToOneDecimal(profile.totalKgCo2e - projectedTotalKgCo2e);
   const strongestLever = [...projectedCategoryEmissions]
-    .sort((a, b) => reductions[b.category] - reductions[a.category])[0]?.category ?? 'transport';
+    .sort((a, b) => (emissionMap[b.category] ?? 0) - (emissionMap[a.category] ?? 0))[0]?.category ?? 'transport';
 
   const narrativeMap: Record<CarbonCategory, string> = {
     transport: 'Transport is the biggest swing factor in this scenario and creates the fastest score lift.',

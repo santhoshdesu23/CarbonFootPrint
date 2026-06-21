@@ -11,7 +11,7 @@ export default function CarbonPieChart() {
     <Card>
       <h2 className="text-lg font-semibold text-slate-900">Carbon Mix</h2>
       <p className="text-sm text-slate-500">Category share of total emissions.</p>
-      <div className="mt-4 h-72">
+      <div className="mt-4 h-72" aria-label="Pie chart showing carbon emission share by category" role="img">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie data={data} dataKey="value" nameKey="name" outerRadius={100} innerRadius={60} paddingAngle={4}>

@@ -33,7 +33,14 @@ export function buildImpactSummary(profile: CarbonProfile): ImpactSummary {
   const annualSavingsKgCo2e = monthlySavingsKgCo2e * 12;
   const treeEquivalent = Math.max(1, Math.round(annualSavingsKgCo2e / KG_CO2E_PER_TREE_PER_YEAR));
   const carMilesAvoided = Math.max(1, Math.round(annualSavingsKgCo2e / KG_CO2E_PER_CAR_MILE));
-  const estimatedMoneySavedUsd = Math.max(0, Math.round((profile.categoryEmissions.find((entry) => entry.category === 'transport')?.kgCo2e ?? 0) * 0.15 + (profile.categoryEmissions.find((entry) => entry.category === 'energy')?.kgCo2e ?? 0) * 0.18));
+
+  const emissionsByCategory = Object.fromEntries(
+    profile.categoryEmissions.map((e) => [e.category, e.kgCo2e]),
+  );
+  const estimatedMoneySavedUsd = Math.max(
+    0,
+    Math.round((emissionsByCategory['transport'] ?? 0) * 0.15 + (emissionsByCategory['energy'] ?? 0) * 0.18),
+  );
   const communityHouseholds = 250;
   const communityAnnualKgCo2e = annualSavingsKgCo2e * communityHouseholds;
   const communityAnnualTonsCo2e = communityAnnualKgCo2e / 1000;

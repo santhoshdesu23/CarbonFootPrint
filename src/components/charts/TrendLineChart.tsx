@@ -9,7 +9,7 @@ export default function TrendLineChart() {
     <Card>
       <h2 className="text-lg font-semibold text-slate-900">Monthly Trend</h2>
       <p className="text-sm text-slate-500">Month-over-month carbon changes.</p>
-      <div className="mt-4 h-72">
+      <div className="mt-4 h-72" aria-label="Area chart showing monthly carbon trend" role="img">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
             <defs>

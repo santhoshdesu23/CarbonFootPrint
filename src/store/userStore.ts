@@ -1,13 +1,14 @@
 import { create } from 'zustand';
-import { readStorage, writeStorage } from '../services/storageService';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import type { User } from '../types/user';
 
+// Placeholder defaults — replace with real onboarding data before production.
 const DEFAULT_USER: User = {
 	id: 'user-carbonwise',
-	name: 'Alex Green',
-	email: 'alex@example.com',
+	name: 'Your Name',
+	email: 'you@example.com',
 	householdSize: 2,
-	city: 'Seattle',
+	city: 'Your City',
 	preferredUnit: 'metric',
 };
 
@@ -16,13 +17,19 @@ type UserState = {
 	updateUser: (patch: Partial<User>) => void;
 };
 
-export const useUserStore = create<UserState>((set, get) => ({
-	user: readStorage<User>('carbonwise-user', DEFAULT_USER),
-	updateUser: (patch) => {
-		const nextUser = { ...get().user, ...patch };
-		writeStorage('carbonwise-user', nextUser);
-		set({ user: nextUser });
-	},
-}));
+export const useUserStore = create<UserState>()(
+	persist(
+		(set, get) => ({
+			user: DEFAULT_USER,
+			updateUser: (patch) => {
+				set({ user: { ...get().user, ...patch } });
+			},
+		}),
+		{
+			name: 'carbonwise-user',
+			storage: createJSONStorage(() => localStorage),
+		},
+	),
+);
 
 export const userStore = useUserStore;

@@ -13,7 +13,7 @@ export default function WeeklyTrendCard() {
           <p className="text-sm text-slate-500">Track weekly carbon movement over time.</p>
         </div>
       </div>
-      <div className="h-72">
+      <div className="h-72" aria-label="Line chart showing weekly carbon emissions trend" role="img">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />

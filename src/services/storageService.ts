@@ -25,14 +25,20 @@ export function readStorage<T>(key: string, fallback: T): T {
   }
 }
 
-export function writeStorage<T>(key: string, value: T) {
+export function writeStorage<T>(key: string, value: T): boolean {
   const storage = getSafeStorage();
 
   if (!storage) {
-    return;
+    return false;
   }
 
-  storage.setItem(key, JSON.stringify(value));
+  try {
+    storage.setItem(key, JSON.stringify(value));
+    return true;
+  } catch {
+    // Storage may be full or unavailable (e.g. private browsing).
+    return false;
+  }
 }
 
 export function removeStorage(key: string) {

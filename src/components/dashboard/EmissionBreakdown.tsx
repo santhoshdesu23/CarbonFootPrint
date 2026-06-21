@@ -9,7 +9,7 @@ export default function EmissionBreakdown() {
     <Card>
       <h2 className="text-lg font-semibold text-slate-900">Emission Breakdown</h2>
       <p className="text-sm text-slate-500">Category distribution across your footprint profile.</p>
-      <div className="mt-4 h-72">
+      <div className="mt-4 h-72" aria-label="Bar chart showing carbon emissions by category" role="img">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
             <XAxis dataKey="name" stroke="#64748b" />

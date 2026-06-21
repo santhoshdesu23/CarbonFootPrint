@@ -10,7 +10,14 @@ export default function ProgressTracker() {
     <Card>
       <h2 className="text-lg font-semibold text-slate-900">Progress Tracker</h2>
       <p className="text-sm text-slate-500">Goal completion across your sustainability roadmap.</p>
-      <div className="mt-4 rounded-2xl bg-slate-100 p-1">
+      <div
+        className="mt-4 rounded-2xl bg-slate-100 p-1"
+        role="progressbar"
+        aria-valuenow={completion}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label="Goal completion progress"
+      >
         <div className="h-3 rounded-full bg-emerald-500 transition-all" style={{ width: `${completion}%` }} />
       </div>
       <p className="mt-3 text-sm text-slate-600">{completion}% of goals completed</p>

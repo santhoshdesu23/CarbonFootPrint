@@ -10,7 +10,7 @@ export default function BenchmarkChart() {
     <Card>
       <h2 className="text-lg font-semibold text-slate-900">Benchmark Chart</h2>
       <p className="text-sm text-slate-500">Compare your footprint against the sustainability target.</p>
-      <div className="mt-4 h-72">
+      <div className="mt-4 h-72" aria-label="Bar chart comparing your carbon footprint to the household benchmark" role="img">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
