@@ -1,5 +1,19 @@
 import { describe, expect, it } from 'vitest';
-import { formatPercent, formatSavings, formatScore, formatWeight } from '../../utils/formatters';
+import { formatPercent, formatSavings, formatScore, formatWeight, unitLabel } from '../../utils/formatters';
+
+describe('unitLabel', () => {
+  it('returns kg CO2e for metric', () => {
+    expect(unitLabel('metric')).toBe('kg CO2e');
+  });
+
+  it('returns lbs CO2e for imperial', () => {
+    expect(unitLabel('imperial')).toBe('lbs CO2e');
+  });
+
+  it('defaults to metric', () => {
+    expect(unitLabel()).toBe('kg CO2e');
+  });
+});
 
 describe('formatScore', () => {
   it('formats metric by default', () => {

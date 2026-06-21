@@ -53,6 +53,7 @@ describe('assistantStore — sendMessage', () => {
     act(() => { useAssistantStore.getState().sendMessage('Test'); });
     useAssistantStore.getState().messages.forEach((m) => {
       expect(m.id.length).toBeGreaterThan(0);
+      expect(m.id).toMatch(/^msg-/);
       expect(m.createdAt.length).toBeGreaterThan(0);
     });
   });

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { buildCarbonProfile } from '../services/carbonEngine';
 import { generateCoachMessage, getRecommendations } from '../services/recommendationEngine';
+import { createId } from '../utils/helpers';
 import type { AssistantMessage } from '../types/assistant';
 import type { CarbonInput } from '../types/carbon';
 
@@ -21,7 +22,7 @@ export const useAssistantStore = create<AssistantState>()(
 				if (!trimmed) return;
 
 				const userMessage: AssistantMessage = {
-					id: `msg-${Date.now()}`,
+					id: createId('msg'),
 					content: trimmed,
 					role: 'user',
 					createdAt: new Date().toISOString(),
@@ -41,7 +42,7 @@ export const useAssistantStore = create<AssistantState>()(
 				}
 
 				const assistantReply: AssistantMessage = {
-					id: `msg-${Date.now() + 1}`,
+					id: createId('msg'),
 					content: replyContent,
 					role: 'assistant',
 					createdAt: new Date().toISOString(),

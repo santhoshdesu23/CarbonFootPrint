@@ -30,6 +30,17 @@ type CarbonPersistedState = {
 	input: CarbonInput;
 };
 
+/** Extracts only the raw CarbonInput fields from a CarbonProfile, dropping computed fields. */
+const extractInput = (profile: CarbonProfile): CarbonInput => ({
+	transportKm: profile.transportKm,
+	transportDaysPerWeek: profile.transportDaysPerWeek,
+	meatMealsPerWeek: profile.meatMealsPerWeek,
+	dairyMealsPerWeek: profile.dairyMealsPerWeek,
+	homeEnergyKwhPerMonth: profile.homeEnergyKwhPerMonth,
+	shoppingSpendPerWeek: profile.shoppingSpendPerWeek,
+	lifestyleHoursPerWeek: profile.lifestyleHoursPerWeek,
+});
+
 const buildStateFromInput = (input: CarbonInput): Omit<CarbonState, 'updateInput' | 'resetProfile'> => {
 	const profile = buildCarbonProfile(input);
 
@@ -48,17 +59,7 @@ export const useCarbonStore = create<CarbonState>()(
 		(set, get) => ({
 			...buildStateFromInput(DEFAULT_INPUT),
 			updateInput: (input) => {
-				const p = get().profile;
-				const currentInput: CarbonInput = {
-					transportKm: p.transportKm,
-					transportDaysPerWeek: p.transportDaysPerWeek,
-					meatMealsPerWeek: p.meatMealsPerWeek,
-					dairyMealsPerWeek: p.dairyMealsPerWeek,
-					homeEnergyKwhPerMonth: p.homeEnergyKwhPerMonth,
-					shoppingSpendPerWeek: p.shoppingSpendPerWeek,
-					lifestyleHoursPerWeek: p.lifestyleHoursPerWeek,
-				};
-				set({ ...buildStateFromInput({ ...currentInput, ...input }) });
+				set({ ...buildStateFromInput({ ...extractInput(get().profile), ...input }) });
 			},
 			resetProfile: () => {
 				set({ ...buildStateFromInput(DEFAULT_INPUT) });
@@ -67,17 +68,7 @@ export const useCarbonStore = create<CarbonState>()(
 		{
 			name: 'carbonwise-carbon-store',
 			storage: createJSONStorage(() => localStorage),
-			partialize: (state) => ({
-				input: {
-					transportKm: state.profile.transportKm,
-					transportDaysPerWeek: state.profile.transportDaysPerWeek,
-					meatMealsPerWeek: state.profile.meatMealsPerWeek,
-					dairyMealsPerWeek: state.profile.dairyMealsPerWeek,
-					homeEnergyKwhPerMonth: state.profile.homeEnergyKwhPerMonth,
-					shoppingSpendPerWeek: state.profile.shoppingSpendPerWeek,
-					lifestyleHoursPerWeek: state.profile.lifestyleHoursPerWeek,
-				},
-			} satisfies CarbonPersistedState),
+			partialize: (state) => ({ input: extractInput(state.profile) } satisfies CarbonPersistedState),
 			merge: (persisted, current) => {
 				const hydratedInput = (persisted as CarbonPersistedState | undefined)?.input ?? DEFAULT_INPUT;
 				return { ...current, ...buildStateFromInput(hydratedInput) };

@@ -11,6 +11,11 @@ function weightLabel(unit: UnitPreference): string {
   return unit === 'imperial' ? 'lbs CO2e' : 'kg CO2e';
 }
 
+/** Returns just the unit label string, e.g. "kg CO2e" or "lbs CO2e". */
+export function unitLabel(unit: UnitPreference = 'metric'): string {
+  return weightLabel(unit);
+}
+
 export function formatScore(value: number, unit: UnitPreference = 'metric') {
   return `${convertWeight(value, unit).toFixed(1)} ${weightLabel(unit)}`;
 }

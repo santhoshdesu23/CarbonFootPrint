@@ -79,6 +79,7 @@ export default function CarbonTwinSimulator() {
                 onChange={(event) => setScenario((current) => ({ ...current, [slider.key]: Number(event.target.value) }))}
                 className="mt-4 w-full accent-emerald-600"
                 aria-label={slider.label}
+                aria-valuetext={`${scenario[slider.key]}%`}
               />
             </label>
           ))}
