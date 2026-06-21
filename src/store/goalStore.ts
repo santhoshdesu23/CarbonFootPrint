@@ -37,5 +37,3 @@ export const useGoalStore = create<GoalState>()(
 		},
 	),
 );
-
-export const goalStore = useGoalStore;

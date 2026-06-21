@@ -85,5 +85,3 @@ export const useCarbonStore = create<CarbonState>()(
 		},
 	),
 );
-
-export const carbonStore = useCarbonStore;

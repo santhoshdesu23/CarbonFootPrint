@@ -46,21 +46,28 @@ export function calculateCarbonScore(totalKgCo2e: number) {
   return clamp(roundToOneDecimal(rawScore), 0, 100);
 }
 
+// Simulated week-over-week drift: ±8 kg CO2e per week offset from current total
+const WEEKLY_DRIFT_KG = 8;
+
 export function buildTrend(totalKgCo2e: number): WeeklyEmissionEntry[] {
   return Array.from({ length: 7 }, (_, index) => {
-    const offset = index - 3;
+    const offset = index - 3; // centre the trend on the current week (index 3)
     return {
       weekLabel: `W${index + 1}`,
-      kgCo2e: roundToOneDecimal(Math.max(0, totalKgCo2e + offset * 8)),
+      kgCo2e: roundToOneDecimal(Math.max(0, totalKgCo2e + offset * WEEKLY_DRIFT_KG)),
     };
   });
 }
+
+// Simulated monthly improvement: starts 60 kg below current, rises 20 kg/month
+const MONTHLY_START_OFFSET_KG = 60;
+const MONTHLY_STEP_KG = 20;
 
 export function buildMonthlyTrend(totalKgCo2e: number): MonthlyEmissionEntry[] {
   const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
   return labels.map((label, index) => ({
     monthLabel: label,
-    kgCo2e: roundToOneDecimal(Math.max(0, totalKgCo2e - 60 + index * 20)),
+    kgCo2e: roundToOneDecimal(Math.max(0, totalKgCo2e - MONTHLY_START_OFFSET_KG + index * MONTHLY_STEP_KG)),
   }));
 }
 

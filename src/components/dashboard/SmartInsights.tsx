@@ -1,11 +1,14 @@
 import Card from '../common/Card';
 import { useCarbonStore } from '../../store/carbonStore';
+import { useUserStore } from '../../store/userStore';
+import { formatWeight } from '../../utils/formatters';
 
 // Monthly reduction opportunity as a percentage of total emissions
 const MONTHLY_OPPORTUNITY_RATE = 0.12;
 
 export default function SmartInsights() {
   const profile = useCarbonStore((state) => state.profile);
+  const unit = useUserStore((state) => state.user.preferredUnit);
   const topCategory = [...profile.categoryEmissions].sort((a, b) => b.kgCo2e - a.kgCo2e)[0];
   const monthlyOpportunity = Math.round(profile.totalKgCo2e * MONTHLY_OPPORTUNITY_RATE);
   const benchmarkGap = Math.max(0, profile.totalKgCo2e - profile.benchmarkKgCo2e);
@@ -24,13 +27,13 @@ export default function SmartInsights() {
       <div className="grid grid-cols-2 gap-3 text-sm">
         <div className="rounded-2xl border border-slate-200 p-4">
           <p className="text-slate-500">Benchmark gap</p>
-          <p className="mt-1 text-xl font-semibold text-slate-900">{benchmarkGap.toFixed(1)}</p>
-          <p className="text-xs text-slate-400">kg CO2e above target</p>
+          <p className="mt-1 text-xl font-semibold text-slate-900">{formatWeight(benchmarkGap, unit)}</p>
+          <p className="text-xs text-slate-400">above target</p>
         </div>
         <div className="rounded-2xl border border-slate-200 p-4">
           <p className="text-slate-500">Monthly opportunity</p>
-          <p className="mt-1 text-xl font-semibold text-slate-900">{monthlyOpportunity}</p>
-          <p className="text-xs text-slate-400">kg CO2e reducible</p>
+          <p className="mt-1 text-xl font-semibold text-slate-900">{formatWeight(monthlyOpportunity, unit)}</p>
+          <p className="text-xs text-slate-400">reducible this month</p>
         </div>
       </div>
     </Card>

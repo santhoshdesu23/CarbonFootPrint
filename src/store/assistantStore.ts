@@ -76,5 +76,3 @@ export const useAssistantStore = create<AssistantState>()(
 		},
 	),
 );
-
-export const assistantStore = useAssistantStore;
