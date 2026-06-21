@@ -1,10 +1,12 @@
 import Card from '../common/Card';
 import Button from '../common/Button';
 import { useCarbonStore } from '../../store/carbonStore';
+import { useUserStore } from '../../store/userStore';
 import { formatSavings } from '../../utils/formatters';
 
 export default function ReductionOpportunities() {
   const recommendations = useCarbonStore((state) => state.recommendations);
+  const unit = useUserStore((state) => state.user.preferredUnit);
 
   return (
     <Card className="space-y-4">
@@ -19,7 +21,7 @@ export default function ReductionOpportunities() {
             <p className="mt-1 text-sm text-slate-600">{item.description}</p>
             <div className="mt-3 flex items-center justify-between gap-3 text-xs text-slate-500">
               <span>{item.impactLabel}</span>
-              <span>{formatSavings(item.savingsKgCo2e)}</span>
+              <span>{formatSavings(item.savingsKgCo2e, unit)}</span>
             </div>
           </div>
         ))}

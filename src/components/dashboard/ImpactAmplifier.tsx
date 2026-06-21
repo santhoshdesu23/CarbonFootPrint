@@ -1,10 +1,12 @@
 import Card from '../common/Card';
 import { useCarbonStore } from '../../store/carbonStore';
+import { useUserStore } from '../../store/userStore';
 import { buildImpactSummary } from '../../services/impactEngine';
 import { formatSavings } from '../../utils/formatters';
 
 export default function ImpactAmplifier() {
   const profile = useCarbonStore((state) => state.profile);
+  const unit = useUserStore((state) => state.user.preferredUnit);
   const impact = buildImpactSummary(profile);
 
   return (
@@ -19,7 +21,7 @@ export default function ImpactAmplifier() {
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-2xl bg-white/10 p-4 backdrop-blur">
             <p className="text-xs uppercase tracking-[0.25em] text-emerald-200">Annual savings</p>
-            <p className="mt-2 text-2xl font-semibold">{formatSavings(impact.annualSavingsKgCo2e)}</p>
+            <p className="mt-2 text-2xl font-semibold">{formatSavings(impact.annualSavingsKgCo2e, unit)}</p>
           </div>
           <div className="rounded-2xl bg-white/10 p-4 backdrop-blur">
             <p className="text-xs uppercase tracking-[0.25em] text-emerald-200">Tree equivalent</p>

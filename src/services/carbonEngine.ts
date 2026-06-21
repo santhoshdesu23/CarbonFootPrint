@@ -12,16 +12,20 @@ import type {
 } from '../types/carbon';
 
 const TRANSPORT_FACTOR = 0.21;
-const FOOD_FACTOR = 0.34;
+// Food emissions use per-meal factors: meat = 2.4 kg CO2e, dairy = 0.9 kg CO2e
+const MEAT_MEAL_FACTOR = 2.4;
+const DAIRY_MEAL_FACTOR = 0.9;
 const ENERGY_FACTOR = 0.43;
 const SHOPPING_FACTOR = 0.18;
 const LIFESTYLE_FACTOR = 0.08;
 const BENCHMARK_KG_CO2E = 1200;
+// Weekly-to-monthly multiplier (4 weeks per month)
+const WEEKS_PER_MONTH = 4;
 
 export function calculateCategoryEmissions(input: CarbonInput): CategoryEmission[] {
   const emissions: Record<CarbonCategory, number> = {
     transport: input.transportKm * input.transportDaysPerWeek * TRANSPORT_FACTOR,
-    food: (input.meatMealsPerWeek * 2.4) + (input.dairyMealsPerWeek * 0.9),
+    food: (input.meatMealsPerWeek * MEAT_MEAL_FACTOR) + (input.dairyMealsPerWeek * DAIRY_MEAL_FACTOR),
     energy: input.homeEnergyKwhPerMonth * ENERGY_FACTOR,
     shopping: input.shoppingSpendPerWeek * SHOPPING_FACTOR,
     lifestyle: input.lifestyleHoursPerWeek * LIFESTYLE_FACTOR,
@@ -145,7 +149,7 @@ export function buildScenarioProjection(profile: CarbonProfile, scenario: Carbon
 
 export function estimateMonthlySavings(currentProfile: CarbonProfile, targetReductionPercent: number) {
   const percent = clamp(targetReductionPercent, 0, 100) / 100;
-  return roundToOneDecimal(currentProfile.totalKgCo2e * 4 * percent);
+  return roundToOneDecimal(currentProfile.totalKgCo2e * WEEKS_PER_MONTH * percent);
 }
 
 export function getAverageTrend(trend: WeeklyEmissionEntry[]) {

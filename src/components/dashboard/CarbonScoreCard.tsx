@@ -1,10 +1,12 @@
 import Card from '../common/Card';
 import { useCarbonStore } from '../../store/carbonStore';
+import { useUserStore } from '../../store/userStore';
 import { formatScore } from '../../utils/formatters';
 
 export default function CarbonScoreCard() {
   const score = useCarbonStore((state) => state.profile.carbonScore);
   const total = useCarbonStore((state) => state.profile.totalKgCo2e);
+  const unit = useUserStore((state) => state.user.preferredUnit);
 
   return (
     <Card>
@@ -16,7 +18,7 @@ export default function CarbonScoreCard() {
         </div>
         <div className="rounded-2xl bg-emerald-50 px-4 py-3 text-right">
           <p className="text-xs font-medium uppercase tracking-[0.25em] text-emerald-700">Total CO2e</p>
-          <p className="text-lg font-semibold text-emerald-900">{formatScore(total)}</p>
+          <p className="text-lg font-semibold text-emerald-900">{formatScore(total, unit)}</p>
         </div>
       </div>
     </Card>

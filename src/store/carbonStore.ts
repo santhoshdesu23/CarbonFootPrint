@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { buildCarbonProfile, calculateCarbonScore, estimateMonthlySavings } from '../services/carbonEngine';
+import { buildCarbonProfile, estimateMonthlySavings } from '../services/carbonEngine';
 import { buildBenchmarkComparison, buildCategoryChartData, buildTrendChartData } from '../services/analyticsService';
 import { getRecommendations } from '../services/recommendationEngine';
 import type { CarbonInput, CarbonProfile, Recommendation } from '../types/carbon';
@@ -48,10 +48,17 @@ export const useCarbonStore = create<CarbonState>()(
 		(set, get) => ({
 			...buildStateFromInput(DEFAULT_INPUT),
 			updateInput: (input) => {
-				const { transportKm, transportDaysPerWeek, meatMealsPerWeek, dairyMealsPerWeek, homeEnergyKwhPerMonth, shoppingSpendPerWeek, lifestyleHoursPerWeek } = get().profile;
-				const currentInput: CarbonInput = { transportKm, transportDaysPerWeek, meatMealsPerWeek, dairyMealsPerWeek, homeEnergyKwhPerMonth, shoppingSpendPerWeek, lifestyleHoursPerWeek };
-				const nextInput: CarbonInput = { ...currentInput, ...input };
-				set({ ...buildStateFromInput(nextInput) });
+				const p = get().profile;
+				const currentInput: CarbonInput = {
+					transportKm: p.transportKm,
+					transportDaysPerWeek: p.transportDaysPerWeek,
+					meatMealsPerWeek: p.meatMealsPerWeek,
+					dairyMealsPerWeek: p.dairyMealsPerWeek,
+					homeEnergyKwhPerMonth: p.homeEnergyKwhPerMonth,
+					shoppingSpendPerWeek: p.shoppingSpendPerWeek,
+					lifestyleHoursPerWeek: p.lifestyleHoursPerWeek,
+				};
+				set({ ...buildStateFromInput({ ...currentInput, ...input }) });
 			},
 			resetProfile: () => {
 				set({ ...buildStateFromInput(DEFAULT_INPUT) });

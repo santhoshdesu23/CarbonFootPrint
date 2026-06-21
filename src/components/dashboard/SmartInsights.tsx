@@ -1,13 +1,18 @@
 import Card from '../common/Card';
 import { useCarbonStore } from '../../store/carbonStore';
 
+// Monthly reduction opportunity as a percentage of total emissions
+const MONTHLY_OPPORTUNITY_RATE = 0.12;
+
 export default function SmartInsights() {
   const profile = useCarbonStore((state) => state.profile);
+  const topCategory = [...profile.categoryEmissions].sort((a, b) => b.kgCo2e - a.kgCo2e)[0];
+  const monthlyOpportunity = Math.round(profile.totalKgCo2e * MONTHLY_OPPORTUNITY_RATE);
+  const benchmarkGap = Math.max(0, profile.totalKgCo2e - profile.benchmarkKgCo2e);
 
-  const insight =
-    profile.carbonScore >= 70
-      ? 'Your profile is efficient. Focus on fine-tuning the high-impact transport and food categories.'
-      : 'The fastest savings come from transport and food. Small changes there will move the score quickly.';
+  const insight = profile.carbonScore >= 70
+    ? `Your profile is efficient. Fine-tuning ${topCategory?.category ?? 'your top category'} can push your score even higher.`
+    : `Your biggest opportunity is ${topCategory?.category ?? 'reducing emissions'}. Small consistent changes there will move your score quickly.`;
 
   return (
     <Card className="space-y-3">
@@ -19,11 +24,13 @@ export default function SmartInsights() {
       <div className="grid grid-cols-2 gap-3 text-sm">
         <div className="rounded-2xl border border-slate-200 p-4">
           <p className="text-slate-500">Benchmark gap</p>
-          <p className="mt-1 text-xl font-semibold text-slate-900">{Math.max(0, profile.totalKgCo2e - profile.benchmarkKgCo2e).toFixed(1)}</p>
+          <p className="mt-1 text-xl font-semibold text-slate-900">{benchmarkGap.toFixed(1)}</p>
+          <p className="text-xs text-slate-400">kg CO2e above target</p>
         </div>
         <div className="rounded-2xl border border-slate-200 p-4">
           <p className="text-slate-500">Monthly opportunity</p>
-          <p className="mt-1 text-xl font-semibold text-slate-900">{Math.round(profile.totalKgCo2e * 0.12).toFixed(0)}</p>
+          <p className="mt-1 text-xl font-semibold text-slate-900">{monthlyOpportunity}</p>
+          <p className="text-xs text-slate-400">kg CO2e reducible</p>
         </div>
       </div>
     </Card>
